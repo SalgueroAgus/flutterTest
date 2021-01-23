@@ -56,6 +56,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Future<Album> album;
+
+  @override
+  void initState() {
+    super.initState();
+    album = getAlbum(_counter.toString());
+  }
+
   Future<Album> getAlbum(String id) async {
     var response =
         await http.get("https://jsonplaceholder.typicode.com/albums/${id}");
@@ -116,6 +124,17 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            FutureBuilder<Album>(
+              future: album,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data.title);
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error);
+                }
+                return CircularProgressIndicator();
+              },
+            )
           ],
         ),
       ),
