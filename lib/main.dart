@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'models/album.dart';
+import 'models/personaje.dart';
 
 void main() {
   runApp(MyApp());
@@ -55,19 +56,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  Future<Album> album;
+  int _counter = 1;
+  Future<Personaje> personaje;
 
   @override
   void initState() {
     super.initState();
-    album = getAlbum("1");
+    personaje = getCharacter("1");
   }
 
-  Future<Album> getAlbum(String id) async {
+  Future<Personaje> getCharacter(String id) async {
     var response =
-        await http.get("https://jsonplaceholder.typicode.com/albums/${id}");
-    return Album.fromJson(jsonDecode(response.body));
+        await http.get("https://rickandmortyapi.com/api/character/$id");
+    return Personaje.fromJson(jsonDecode(response.body));
   }
 
   _incrementCounter() async {
@@ -78,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      personaje = getCharacter(_counter.toString());
     });
   }
 
@@ -122,11 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-            FutureBuilder<Album>(
-              future: album,
+            FutureBuilder<Personaje>(
+              future: personaje,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data.id != null) {
-                  return Text(snapshot.data.title);
+                  return Text(snapshot.data.name);
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error);
                 }
