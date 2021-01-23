@@ -86,6 +86,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  _decreaseCounter() async {
+    setState(() {
+      _counter--;
+      personaje = getCharacter(_counter.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -127,27 +134,41 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-            FutureBuilder<Personaje>(
-              future: personaje,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && !loading) {
-                  return Container(
-                      height: 500,
-                      child: Column(
-                        children: [
-                          Text(
-                            snapshot.data.name,
-                            style: TextStyle(fontSize: 30),
-                          ),
-                          Image.network(snapshot.data.image)
-                        ],
-                      ));
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error);
-                }
-                return CircularProgressIndicator();
+            GestureDetector(
+              onHorizontalDragStart: (details) {
+                setState(() {
+                  loading = true;
+                });
               },
-            )
+              onHorizontalDragEnd: (details) {
+                if (details.primaryVelocity > 0) {
+                  _decreaseCounter();
+                } else if (details.primaryVelocity < 0) {
+                  _incrementCounter();
+                }
+              },
+              child: FutureBuilder<Personaje>(
+                future: personaje,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && !loading) {
+                    return Container(
+                        height: 500,
+                        child: Column(
+                          children: [
+                            Text(
+                              snapshot.data.name,
+                              style: TextStyle(fontSize: 30),
+                            ),
+                            Image.network(snapshot.data.image)
+                          ],
+                        ));
+                  } else if (snapshot.hasError) {
+                    return Text(snapshot.error);
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+            ),
           ],
         ),
       ),
