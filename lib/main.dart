@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'models/album.dart';
 import 'models/personaje.dart';
+import 'widgets/atoms/CharacterCard.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Salguero y Roura flutter test'),
     );
   }
 }
@@ -67,10 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Personaje> getCharacter(String id) async {
-    loading = true;
+    setState(() => loading = true);
     var response =
         await http.get("https://rickandmortyapi.com/api/character/$id");
-    loading = false;
+    setState(() => loading = false);
     return Personaje.fromJson(jsonDecode(response.body));
   }
 
@@ -103,38 +103,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            GestureDetector(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Text('You have pushed the button this many times:'),
+          Text('$_counter', style: Theme.of(context).textTheme.headline4),
+          GestureDetector(
               onHorizontalDragStart: (details) {
                 setState(() {
                   loading = true;
@@ -147,31 +124,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   _incrementCounter();
                 }
               },
-              child: FutureBuilder<Personaje>(
-                future: personaje,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && !loading) {
-                    return Container(
-                        height: 500,
-                        child: Column(
-                          children: [
-                            Text(
-                              snapshot.data.name,
-                              style: TextStyle(fontSize: 30),
-                            ),
-                            Image.network(snapshot.data.image)
-                          ],
-                        ));
-                  } else if (snapshot.hasError) {
-                    return Text(snapshot.error);
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+              child: CharacterCard(
+                personaje: this.personaje,
+                loading: this.loading,
+              ))
+        ],
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
