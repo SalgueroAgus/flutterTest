@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'models/album.dart';
 
 void main() {
   runApp(MyApp());
@@ -52,8 +56,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  Future<http.Response> poronga() {
-    return http.get('https://jsonplaceholder.typicode.com/albums/1');
+  Future<Album> getAlbum(String id) async {
+    var response =
+        await http.get("https://jsonplaceholder.typicode.com/albums/${id}");
+    return Album.fromJson(jsonDecode(response.body));
   }
 
   _incrementCounter() async {
@@ -65,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-    http.Response tuvieja = await poronga();
-    print(tuvieja.body);
+    Album miAlbum = await getAlbum(_counter.toString());
+    print(miAlbum);
   }
 
   @override
