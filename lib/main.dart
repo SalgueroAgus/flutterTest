@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    album = getAlbum(_counter.toString());
+    album = getAlbum("1");
   }
 
   Future<Album> getAlbum(String id) async {
@@ -79,8 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-    Album miAlbum = await getAlbum(_counter.toString());
-    print(miAlbum);
   }
 
   @override
@@ -127,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
             FutureBuilder<Album>(
               future: album,
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data.id != null) {
                   return Text(snapshot.data.title);
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error);
