@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
@@ -51,6 +52,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Future<http.Response> fetchAlbum() {
+    return http.get('https://jsonplaceholder.typicode.com/albums/1');
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -61,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+    fetchAlbum().then((response) => {print(response)});
   }
 
   @override
