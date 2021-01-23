@@ -58,6 +58,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 1;
   Future<Personaje> personaje;
+  bool loading = false;
 
   @override
   void initState() {
@@ -66,8 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Personaje> getCharacter(String id) async {
+    loading = true;
     var response =
         await http.get("https://rickandmortyapi.com/api/character/$id");
+    loading = false;
     return Personaje.fromJson(jsonDecode(response.body));
   }
 
@@ -115,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Text(
               'You have pushed the button this many times:',
@@ -127,8 +130,18 @@ class _MyHomePageState extends State<MyHomePage> {
             FutureBuilder<Personaje>(
               future: personaje,
               builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.id != null) {
-                  return Text(snapshot.data.name);
+                if (snapshot.hasData && !loading) {
+                  return Container(
+                      height: 500,
+                      child: Column(
+                        children: [
+                          Text(
+                            snapshot.data.name,
+                            style: TextStyle(fontSize: 30),
+                          ),
+                          Image.network(snapshot.data.image)
+                        ],
+                      ));
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error);
                 }
